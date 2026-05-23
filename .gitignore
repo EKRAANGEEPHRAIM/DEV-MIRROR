@@ -1,0 +1,12 @@
+# Dépendances
+**/node_modules/
+**/dist/
+**/.nx/
+
+# Environnement
+**/.env
+**/.env.*
+
+# Logs
+**/logs
+*.log
