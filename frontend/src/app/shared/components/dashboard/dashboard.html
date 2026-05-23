@@ -1,0 +1,69 @@
+<div class="min-h-screen bg-gray-950 text-white">
+  <div class="max-w-3xl mx-auto px-4 py-12">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold">
+          Welcome, {{ authService.currentUser()?.username }} 👋
+        </h1>
+        <p class="text-gray-400 text-sm mt-1">Welcome to DevMirror</p>
+      </div>
+      <button
+        (click)="authService.logout()"
+        class="text-gray-400 hover:text-white text-sm transition"
+      >
+        Logout
+      </button>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-2 gap-4">
+      
+      
+      <a
+        [routerLink]="['/profil', authService.currentUser()?.username]"
+        class="bg-gray-900 border border-gray-800 hover:border-violet-500/50
+               rounded-2xl p-6 transition group block"
+      >
+        <div class="w-10 h-10 bg-violet-600/20 rounded-xl flex items-center
+                    justify-center text-violet-400 mb-4 group-hover:bg-violet-600/30 transition">
+          👤
+        </div>
+        <h3 class="font-semibold">Mon profil</h3>
+        <p class="text-gray-400 text-sm mt-1">View and edit your profile</p>
+      </a>
+
+      <!-- Chat -->
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 opacity-50">
+        <div class="w-10 h-10 bg-blue-600/20 rounded-xl flex items-center
+                    justify-center text-blue-400 mb-4">
+          💬
+        </div>
+        <h3 class="font-semibold">Chat</h3>
+        <p class="text-gray-400 text-sm mt-1">Soon — step 4</p>
+      </div>
+
+      <!-- Assistant IA -->
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 opacity-50">
+        <div class="w-10 h-10 bg-amber-600/20 rounded-xl flex items-center
+                    justify-center text-amber-400 mb-4">
+          🤖
+        </div>
+        <h3 class="font-semibold">Assistant IA</h3>
+        <p class="text-gray-400 text-sm mt-1">Soon — step 5</p>
+      </div>
+
+      <!-- Activity -->
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 opacity-50">
+        <div class="w-10 h-10 bg-green-600/20 rounded-xl flex items-center
+                    justify-center text-green-400 mb-4">
+          📊
+        </div>
+        <h3 class="font-semibold">Activity</h3>
+        <p class="text-gray-400 text-sm mt-1">Soon — step 6</p>
+      </div>
+    </div>
+
+  </div>
+</div>

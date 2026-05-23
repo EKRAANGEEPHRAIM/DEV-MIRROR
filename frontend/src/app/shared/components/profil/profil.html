@@ -1,0 +1,236 @@
+<div class="min-h-screen bg-gray-950 text-white">
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="flex items-center justify-center min-h-screen">
+      <div class="w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  }
+
+  @if (!loading() && profil()) {
+    <div class="max-w-3xl mx-auto px-4 py-12">
+
+      <!-- Header profil -->
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 mb-6">
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-5">
+
+            <!-- Avatar -->
+            <div class="w-20 h-20 rounded-full bg-violet-600 flex items-center justify-center text-2xl font-bold shrink-0">
+              @if (profil()!.avatar) {
+                <img [src]="profil()!.avatar" [alt]="profil()!.username"
+                     class="w-full h-full rounded-full object-cover"/>
+              } @else {
+                {{ profil()!.username.charAt(0).toUpperCase() }}
+              }
+            </div>
+
+            <!-- Profile info -->
+            <div>
+              <h1 class="text-2xl font-bold">
+                {{ profil()!.fullName || profil()!.username }}
+              </h1>
+              <p class="text-gray-400">@{{ profil()!.username }}</p>
+              @if (profil()!.bio) {
+                <p class="text-gray-300 mt-2 max-w-md">{{ profil()!.bio }}</p>
+              }
+            </div>
+          </div>
+
+          <!-- Edit button -->
+          @if (IsOwner()) {
+            <button
+              (click)="toggleEdit()"
+              class="bg-gray-800 hover:bg-gray-700 border border-gray-700
+                     px-4 py-2 rounded-lg text-sm transition flex items-center gap-2"
+            >
+              {{ editMode() ? 'cancel' : 'Modify' }}
+            </button>
+          }
+        </div>
+
+        <!-- Link -->
+        <div class="flex items-center gap-4 mt-5 flex-wrap">
+          @if (profil()!.github) {
+            <a [href]="profil()!.github" target="_blank"
+               class="text-gray-400 hover:text-violet-400 text-sm flex items-center gap-1.5 transition">
+              GitHub ↗
+            </a>
+          }
+          @if (profil()!.website) {
+            <a [href]="profil()!.website" target="_blank"
+               class="text-gray-400 hover:text-violet-400 text-sm flex items-center gap-1.5 transition">
+              Site web ↗
+            </a>
+          }
+          <span class="text-gray-600 text-xs">
+          Member since {{ profil()!.createdAt | date:'MMM yyyy' }}
+          </span>
+        </div>
+
+        <!-- Skills -->
+    @if (profil()!.skills.length > 0 && !editMode()) {
+  <div class="flex flex-wrap gap-2 mt-5">
+    @for (skill of profil()!.skills; track skill) {
+      <span class="bg-violet-500/10 border border-violet-500/20
+                   text-violet-300 text-xs px-3 py-1 rounded-full">
+        {{ skill }}
+      </span>
+    }
+  </div>
+}
+
+      </div>
+
+      <!-- Edit form -->
+      @if (editMode() && IsOwner()) {
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 mb-6">
+          <h2 class="text-lg font-semibold mb-6">Modifier le profil</h2>
+
+          <div class="space-y-5">
+
+            <!-- Full Name -->
+            <div>
+              <label class="block text-sm text-gray-400 mb-1.5">Nom complet</label>
+              <input
+                [(ngModel)]="form.fullName"
+                type="text"
+                class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg
+                       px-4 py-2.5 focus:outline-none focus:border-violet-500 transition"
+              />
+            </div>
+
+            <!-- Bio -->
+            <div>
+              <label class="block text-sm text-gray-400 mb-1.5">
+                Bio
+                <span class="text-gray-600 ml-1">
+                  ({{ (form.bio?.length ?? 0) }}/160)
+                </span>
+              </label>
+              <textarea
+                [(ngModel)]="form.bio"
+                rows="3"
+                maxlength="160"
+                class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg
+                       px-4 py-2.5 focus:outline-none focus:border-violet-500 transition resize-none"
+              ></textarea>
+              @if (errors().bio) {
+                <p class="text-red-400 text-xs mt-1">{{ errors().bio }}</p>
+              }
+            </div>
+
+            <!-- GitHub & Website -->
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm text-gray-400 mb-1.5">GitHub</label>
+                <input
+                  [(ngModel)]="form.github"
+                  type="url"
+                  placeholder="https://github.com/toi"
+                  class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg
+                         px-4 py-2.5 focus:outline-none focus:border-violet-500 transition"
+                />
+                @if (errors().github) {
+                  <p class="text-red-400 text-xs mt-1">{{ errors().github }}</p>
+                }
+              </div>
+              <div>
+                <label class="block text-sm text-gray-400 mb-1.5">Website</label>
+                <input
+                  [(ngModel)]="form.website"
+                  type="url"
+                  placeholder="https://tonsite.dev"
+                  class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg
+                         px-4 py-2.5 focus:outline-none focus:border-violet-500 transition"
+                />
+                @if (errors().website) {
+                  <p class="text-red-400 text-xs mt-1">{{ errors().website }}</p>
+                }
+              </div>
+            </div>
+
+            <!-- Skills -->
+            <div>
+              <label class="block text-sm text-gray-400 mb-1.5">Compétences</label>
+              <div class="flex gap-2 mb-2">
+                <input
+                  [ngModel]="skillInput()"
+                  (ngModelChange)="skillInput.set($event)"
+                  (keydown)="onSkillKeydown($event)"
+                  type="text"
+                  placeholder="ex: TypeScript"
+                  class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg
+                         px-4 py-2.5 focus:outline-none focus:border-violet-500 transition"
+                />
+                <button
+                  type="button"
+                  (click)="addSkill()"
+                  class="bg-violet-600 hover:bg-violet-500 px-4 py-2.5 rounded-lg transition text-sm"
+                >
+                  Ajouter
+                </button>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                @for (skill of form.skills; track skill) {
+                  <span class="bg-violet-500/10 border border-violet-500/20
+                               text-violet-300 text-xs px-3 py-1 rounded-full
+                               flex items-center gap-1.5">
+                    {{ skill }}
+                    <button (click)="removeSkill(skill)"
+                            class="text-violet-400 hover:text-red-400 transition">
+                      ×
+                    </button>
+                  </span>
+                }
+              </div>
+            </div>
+
+            <!-- Save -->
+            <button
+              (click)="saveProfile()"
+              [disabled]="saving()"
+              class="w-full bg-violet-600 hover:bg-violet-500 disabled:opacity-50
+                     font-medium rounded-lg py-2.5 transition"
+            >
+              {{ saving() ? 'Saving...' : 'Save modification' }}
+            </button>
+
+          </div>
+        </div>
+      }
+
+      <!-- Posts -->
+      @if (profil()!.posts &&  profil()!.posts!.length > 0) {
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8">
+          <h2 class="text-lg font-semibold mb-5">Publications</h2>
+          <div class="space-y-4">
+            @for (post of profil()!.posts; track post.id) {
+              <div class="border border-gray-800 rounded-xl p-4 hover:border-gray-700 transition">
+                <h3 class="font-medium text-white">{{ post.title }}</h3>
+                <p class="text-gray-400 text-sm mt-1 line-clamp-2">{{ post.content }}</p>
+                <span class="text-gray-600 text-xs mt-2 block">
+                  {{ post.createdAt | date:'d MMM yyyy' }}
+                </span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+    </div>
+  }
+
+  <!-- 404 -->
+  @if (!loading() && !profil()) {
+    <div class="flex items-center justify-center min-h-screen">
+      <div class="text-center">
+        <p class="text-gray-400 text-xl mb-4">User not found</p>
+        <a routerLink="/dashboard" class="text-violet-400 hover:text-violet-300">
+        dashboard
+        </a>
+      </div>
+    </div>
+  }
+
+</div>

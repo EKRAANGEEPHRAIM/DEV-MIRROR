@@ -1,0 +1,103 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-950 px-4">
+  <div class="w-full max-w-md">
+
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-white">DevMirror</h1>
+      <p class="text-gray-400 mt-2">Join the developer community</p>
+    </div>
+
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8">
+      <h2 class="text-xl font-semibold text-white mb-6">Create an account</h2>
+
+      @if (apiError()) {
+        <div class="bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg p-3 mb-4 text-sm">
+          {{ apiError() }}
+        </div>
+      }
+
+      <form (ngSubmit)="onSubmit()" class="space-y-4">
+
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Full Name -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-1.5">Full name</label>
+            <input
+              [(ngModel)]="form.fullName"
+              name="fullName"
+              type="text"
+              placeholder="John Doe"
+              class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2.5
+                     placeholder-gray-500 focus:outline-none focus:border-violet-500 transition"
+            />
+          </div>
+
+          <!-- Username -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-1.5">Username</label>
+            <input
+              [(ngModel)]="form.username"
+              name="username"
+              type="text"
+              placeholder="john_dev"
+              class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2.5
+                     placeholder-gray-500 focus:outline-none focus:border-violet-500 transition"
+            />
+            @if (errors().username) {
+              <p class="text-red-400 text-xs mt-1">{{ errors().username }}</p>
+            }
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label class="block text-sm text-gray-400 mb-1.5">Email</label>
+          <input
+            [(ngModel)]="form.email"
+            name="email"
+            type="email"
+            placeholder="toi@exemple.com"
+            class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2.5
+                   placeholder-gray-500 focus:outline-none focus:border-violet-500 transition"
+          />
+          @if (errors().email) {
+            <p class="text-red-400 text-xs mt-1">{{ errors().email }}</p>
+          }
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label class="block text-sm text-gray-400 mb-1.5">Mot de passe</label>
+          <input
+            [(ngModel)]="form.password"
+            name="password"
+            type="password"
+            placeholder="••••••••"
+            class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2.5
+                   placeholder-gray-500 focus:outline-none focus:border-violet-500 transition"
+          />
+          @if (errors().password) {
+            <p class="text-red-400 text-xs mt-1">{{ errors().password }}</p>
+          }
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="loading()"
+          class="w-full bg-violet-600 hover:bg-violet-500 disabled:opacity-50
+                 text-white font-medium rounded-lg py-2.5 transition mt-2"
+        >
+          {{ loading() ? 'Creating...' : 'Create my account' }}
+        </button>
+
+      </form>
+
+      <p class="text-center text-gray-500 text-sm mt-6">
+        already an account
+        <a routerLink="/auth/login" class="text-violet-400 hover:text-violet-300">
+          To Connect
+        </a>
+      </p>
+    </div>
+
+  </div>
+</div>
